@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Web Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      crossorigin="anonymous"
+      src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"
+    ></script>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      #webchat {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="webchat" role="main"></div>
+    <script>
+      const fetchSpeechServicesCredentials = {
+        "authorizationToken": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpb24iOiJ3ZXN0dXMyIiwic3Vic2NyaXB0aW9uLWlkIjoiNTZmM2YwMWVmODFkNDA2ZDllZWFhMGU1OTI2NTdlN2MiLCJwcm9kdWN0LWlkIjoiU3BlZWNoU2VydmljZXMuUzAiLCJjb2duaXRpdmUtc2VydmljZXMtZW5kcG9pbnQiOiJodHRwczovL2FwaS5jb2duaXRpdmUubWljcm9zb2Z0LmNvbS9pbnRlcm5hbC92MS4wLyIsImF6dXJlLXJlc291cmNlLWlkIjoiL3N1YnNjcmlwdGlvbnMvMzVmYTc0NjEtZDQ4YS00MDUzLTlhYTItNTZjMDE0NDk1ZTg5L3Jlc291cmNlR3JvdXBzL1dlYkNoYXRQcm9kdWN0aW9uL3Byb3ZpZGVycy9NaWNyb3NvZnQuQ29nbml0aXZlU2VydmljZXMvYWNjb3VudHMvd2ViY2hhdC1tb2NrYm90LWN1c3RvbXNwZWVjaCIsInNjb3BlIjoic3BlZWNoc2VydmljZXMiLCJhdWQiOiJ1cm46bXMuc3BlZWNoc2VydmljZXMud2VzdHVzMiIsImV4cCI6MTY2MzYzOTQ4MywiaXNzIjoidXJuOm1zLmNvZ25pdGl2ZXNlcnZpY2VzIn0.zO6CY-WL-EWNWiQdTzvHvVdSiLLFnmR3k-F3uH7tPgM",
+    "region": "westus2",
+      };
+
+      (async function () {
+        const res = await fetch(
+          "https://powerva.microsoft.com/api/botmanagement/v1/directline/directlinetoken?botId=5fb915d2-5ea4-453a-b3cf-cfd9d8e9d963",
+          { method: "GET" }
+        );
+        console.log("Response : ", res);
+        console.log("Token : ", res.token);
+        const { token } = await res.json();
+
+        const webSpeechPonyfillFactory =
+          await window.WebChat.createCognitiveServicesSpeechServicesPonyfillFactory(
+            {
+              credentials: fetchSpeechServicesCredentials,
+            }
+          );
+
+        window.WebChat.renderWebChat(
+          {
+            directLine: window.WebChat.createDirectLine({
+              token,
+            }),
+            webSpeechPonyfillFactory,
+          },
+          document.getElementById("webchat")
+        );
+
+        document.querySelector("#webchat > *").focus();
+      })().catch((err) => console.error(err));
+    </script>
+  </body>
+</html>
